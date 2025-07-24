@@ -1,0 +1,13 @@
+{
+  "name": "jasper-cli",
+  "image": "mcr.microsoft.com/devcontainers/python:3.11",
+  "postCreateCommand": "cd jasper && pip install --upgrade pip && pip install -r requirements.txt && cd .. && echo '#!/bin/bash\npython jasper/jasper.py \"$@\"' > jasper.sh && chmod +x jasper.sh && echo 'alias jasper=\"python $(pwd)/jasper/jasper.py\"' >> /etc/bash.bashrc"
+  "customizations": {
+    "vscode": {
+      "extensions": ["ms-python.python"]
+    }
+  },
+  "features": {},
+  "forwardPorts": [],
+  "remoteUser": "vscode"
+}
