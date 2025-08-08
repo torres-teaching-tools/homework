@@ -7,8 +7,8 @@ def run_tests():
     if "-" not in folder_name:
         raise ValueError("❌ Could not infer problem ID from folder name. Use format like `132-hello-world`.")
     problem_id = folder_name.split("-")[0]
-    if not os.path.exists("main.c"):
-        raise FileNotFoundError("❌ Could not find main.c in the current folder.")
+    # if not os.path.exists("main.c"):
+    #     raise FileNotFoundError("❌ Could not find main.c in the current folder.")
     zip_path = zip_folder(".")
     with open(zip_path, "rb") as f:
         files = {"file": f}

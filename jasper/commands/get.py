@@ -23,6 +23,15 @@ def run(args):
         # Find project root by locating `.devcontainer`
         root_dir = find_project_root()
         project_path = os.path.join(root_dir, folder_name)
+
+        # Check if folder exists and get confirmation
+        if os.path.exists(project_path):
+            print_status(f"⚠️ Folder '{folder_name}' already exists.", success=False)
+            confirm = input(f"Type 'yes' to overwrite ALL files in '{folder_name}': ").strip().lower()
+            if confirm != "yes":
+                print_status("Download cancelled by user.", success=False)
+                return
+
         os.makedirs(project_path, exist_ok=True)
 
         # Save starter files
