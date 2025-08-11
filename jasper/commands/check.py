@@ -1,5 +1,5 @@
 import os, requests, json
-from jasper.utils import load_config, zip_folder
+from jasper.utils import load_config, zip_folder, format_text
 
 def run_tests():
     config = load_config()
@@ -19,7 +19,11 @@ def run_tests():
         response = requests.post(f"{config['server_url']}/check", data=data, files=files)
     try:
         # Print HTTP status for progress
-        print(f"🔗 Server responded with status: {response.status_code}")
+        # print(f"🔗 Server responded with status: {response.status_code}")
+        if response.status_code == 200:
+            print("Server successfully compiled and tested your code.");
+        else:
+            print("❌ Server could not compile your code.\nMake sure ``make`` works locally before asking jasper to check again.\n --- LOG ---")
         return response.json()
     except Exception:
         print("❌ Server response was not valid JSON.")
@@ -50,7 +54,8 @@ def pretty_print(result, final):
             print("🔒 Authentication error: Please check your student ID or server permissions.")
         return
 
-    print("✅ Unit Test Results:")
+    title = format_text("Unit Test Results:", bold=True, underline=True)
+    print(title)
     total_points = 0
     earned_points = 0
     for test in result.get("tests", []):

@@ -26,10 +26,30 @@ def run(args):
 
         print(f"📘 Problem {match.group(1)}: {meta.get('title', '(No title)')}")
         print()
-        print("📝 Description:")
-        print(meta.get("description", "(No description)"))
+
+        if "markdown" in meta:
+            md_file_path = os.path.join(cwd, meta["markdown"])
+            if os.path.isfile(md_file_path):
+                try:
+                    from rich.console import Console
+                    from rich.markdown import Markdown
+                    console = Console()
+                    with open(md_file_path, "r", encoding="utf-8") as md_file:
+                        md_content = md_file.read()
+                    console.print(Markdown(md_content))
+                except ImportError:
+                    # Fallback if 'rich' isn't installed
+                    with open(md_file_path, "r", encoding="utf-8") as md_file:
+                        print(md_file.read())
+            else:
+                print(f"❌ Markdown file {meta['markdown']} not found.")
+        else:
+            print("📝 Description:")
+            print(meta.get("description", "(No description)"))
+
         print()
         if "badges" in meta:
             print(f"🏷️  Badges: {', '.join(meta['badges'])}")
+
     except Exception as e:
         print(f"❌ Failed to read meta.json: {e}")

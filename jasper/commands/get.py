@@ -1,4 +1,4 @@
-import os, requests, json
+import os, requests, json, shutil
 from jasper.utils import load_config, save_config
 from pretty import print_status
 
@@ -6,6 +6,14 @@ def register(subparsers):
     parser = subparsers.add_parser("get", help="Download starter code for a problem")
     parser.add_argument("query", help="Problem name or ID")
     parser.set_defaults(func=run)
+    
+def clear_directory_contents(path):
+    for entry in os.listdir(path):
+        full_path = os.path.join(path, entry)
+        if os.path.isfile(full_path) or os.path.islink(full_path):
+            os.unlink(full_path)  # delete file or symlink
+        elif os.path.isdir(full_path):
+            shutil.rmtree(full_path)
 
 def run(args):
     config = load_config()
@@ -32,7 +40,11 @@ def run(args):
                 print_status("Download cancelled by user.", success=False)
                 return
 
+            clear_directory_contents(project_path)
+            print_status(f"🧹 Cleared contents of '{folder_name}'", success=True)
+
         os.makedirs(project_path, exist_ok=True)
+
 
         # Save starter files
         for fname, content in data["files"].items():

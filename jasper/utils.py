@@ -4,11 +4,9 @@ import zipfile
 
 DEBUG = False  # Set to True to enable debug output
 
-
 def debug_print(msg):
     if DEBUG:
         print(msg)
-
 
 def find_config_path():
     dir_path = os.getcwd()
@@ -27,15 +25,13 @@ def find_config_path():
             break
         dir_path = parent
 
-    raise FileNotFoundError("❌ Missing config.json. Use `jasper get` first.")
-
+    raise FileNotFoundError("❌ Missing config.json. Use `jasper init` first.")
 
 try:
     CONFIG_PATH = find_config_path()
 except FileNotFoundError as e:
     CONFIG_PATH = None
     debug_print(str(e))
-
 
 def load_config():
     try:
@@ -60,15 +56,18 @@ def load_config():
 
     raise FileNotFoundError("❌ Missing config.json. Use `jasper init` first.")
 
+def _default_config_path():
+    # New default when none exists yet (fixes circular save)
+    return os.path.join(os.getcwd(), "jasper", "config.json")
 
 def save_config(data):
-    if not CONFIG_PATH:
-        raise FileNotFoundError("❌ Cannot save config — path not found.")
-    os.makedirs(os.path.dirname(CONFIG_PATH), exist_ok=True)
-    with open(CONFIG_PATH, "w") as f:
+    # If we already located a config, overwrite it; else write to repo-local default.
+    path = CONFIG_PATH if CONFIG_PATH else _default_config_path()
+    os.makedirs(os.path.dirname(path), exist_ok=True)
+    with open(path, "w") as f:
         json.dump(data, f, indent=2)
-    debug_print(f"✅ Saved config to {CONFIG_PATH}")
-
+    debug_print(f"✅ Saved config to {path}")
+    return path
 
 def zip_folder(folder_path):
     zip_path = f"/tmp/{os.path.basename(folder_path)}.zip"
@@ -80,3 +79,33 @@ def zip_folder(folder_path):
                 arcname = os.path.relpath(full_path, folder_path)
                 zipf.write(full_path, arcname)
     return zip_path
+
+def format_text(text, bold=False, underline=False, color=None):
+    """
+    Format text with ANSI escape codes.
+
+    Args:
+        text (str): The text to format.
+        bold (bool): Apply bold style.
+        underline (bool): Apply underline style.
+        color (str): Optional color name. Supported: black, red, green, yellow, blue, magenta, cyan, white.
+
+    Returns:
+        str: Formatted text with ANSI escape codes.
+    """
+    styles = []
+    colors = {
+        "black": 30, "red": 31, "green": 32, "yellow": 33,
+        "blue": 34, "magenta": 35, "cyan": 36, "white": 37
+    }
+
+    if bold:
+        styles.append("1")
+    if underline:
+        styles.append("4")
+    if color and color.lower() in colors:
+        styles.append(str(colors[color.lower()]))
+
+    if styles:
+        return f"\033[{';'.join(styles)}m{text}\033[0m"
+    return text
