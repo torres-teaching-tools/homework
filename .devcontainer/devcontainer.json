@@ -1,7 +1,6 @@
 {
-  "name": "jasper-cli",
+  "name": "homework",
   "image": "mcr.microsoft.com/devcontainers/python:3.11",
-  "postCreateCommand": "cd jasper && pip install --upgrade pip && pip install -r requirements.txt && cd .. && echo '#!/bin/bash\\nexport PYTHONPATH=$(git rev-parse --show-toplevel)\\npython -m jasper.jasper \"$@\"' | sudo tee /usr/local/bin/jasper > /dev/null && sudo chmod +x /usr/local/bin/jasper",
   "customizations": {
     "vscode": {
       "extensions": ["ms-python.python"]
