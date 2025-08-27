@@ -61,6 +61,7 @@ jasper check                # Run local unit tests (compilation, tests, etc.)
 jasper crit                 # Reviews your code for maintainability and readability (AI)
 jasper submit               # Submits your solution
 jasper badges               # Show your progress and earned badges
+jasper relay                # Sends your code to the TA
 ```
 
 Run `jasper <command> --help` to see options for that command.
